@@ -31,11 +31,13 @@ public class GMusicHttpClient extends SyncHttpClient
 
 	public String post(Context context, String url, HttpEntity entity, String contentType)
 	{
-		post(context, url, entity, contentType, responseHandler);
+		String result = post(context, url, entity, contentType);
 		return result;
 	}
 
-	@Override
+
+
+//	@Override
 	public String onRequestFailed(Throwable error, String content)
 	{
 		return null;

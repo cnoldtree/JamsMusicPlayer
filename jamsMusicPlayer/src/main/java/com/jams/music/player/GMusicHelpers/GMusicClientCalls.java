@@ -15,9 +15,11 @@
  */
 package com.jams.music.player.GMusicHelpers;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.cookie.Cookie;
@@ -44,7 +46,7 @@ public class GMusicClientCalls {
 	
 	public static Context mContext;
 	private static PersistentCookieStore mCookieStore;
-	public static GMusicHttpClient mHttpClient;
+	public static  GMusicHttpClient mHttpClient;
 	private static GMusicClientCalls mInstance;
 	private static String mWebClientUserAgent;
 	private static String mAuthToken;
@@ -76,7 +78,7 @@ public class GMusicClientCalls {
 	 * @return The raw HTTP client object.
 	 *************************************************/
 	public static final HttpClient getRawHttpClient() {
-		return mHttpClient.getHttpClient();
+		return (HttpClient) mHttpClient.getHttpClient();
 	}
 
 	/******************************************************************
@@ -142,7 +144,7 @@ public class GMusicClientCalls {
 	 * @return Value of the "xt" cookie.
 	 *************************************************/
 	private static final String getXtCookieValue() {
-		
+
 		for(Cookie cookie : mCookieStore.getCookies()) {
 			if(cookie.getName().equals("xt"))
 				return cookie.getValue();
@@ -168,7 +170,7 @@ public class GMusicClientCalls {
 		{
 			JSONForm form = new JSONForm().close();
 			GMusicClientCalls.setAuthorizationHeader(authToken);
-			String response = mHttpClient.post(context, 
+			String response = mHttpClient.post(context,
 											   "https://play.google.com/music/listen?hl=en&u=0", 
 											   new ByteArrayEntity(form.toString().getBytes()), 
 											   form.getContentType());
@@ -206,18 +208,18 @@ public class GMusicClientCalls {
 	public static final URI getSongStream(String songId) 
 							throws JSONException, URISyntaxException {
 
-		RequestParams params = new RequestParams();
+		RequestParams  params = new RequestParams();
 		params.put("u", "0");
 		params.put("songid", songId);
 		params.put("pt", "e");
-		
+
 		String response = mHttpClient.get("https://play.google.com/music/play", params);
 
 		if (response!=null) {
 			JSONObject jsonObject = new JSONObject(response);
 			return new URI(jsonObject.optString("url", null));
 		}
-		
+
 		return null;
 	}
 
@@ -261,7 +263,7 @@ public class GMusicClientCalls {
 		form.addField("json", "{\"continuationToken\":\"" + continuationToken + "\"}");
 		form.close();
 
-		String response = mHttpClient.post(context, 
+		String response = mHttpClient.post(context,
 										   "https://play.google.com/music/services/loadalltracks?u=0&xt=" + getXtCookieValue(), 
 										   new ByteArrayEntity(form.toString().getBytes()), 
 										   form.getContentType());
@@ -306,7 +308,7 @@ public class GMusicClientCalls {
 		jsonParam.put("mutations", mutationsArray);
 
 		mHttpClient.setUserAgent(mMobileClientUserAgent);
-		String result = mHttpClient.post(context, 
+		String result = mHttpClient.post(context,
 										 "https://www.googleapis.com/sj/v1.1/playlistbatch?alt=json&hl=en_US", 
 										 new ByteArrayEntity(jsonParam.toString().getBytes()), 
 										 "application/json");
@@ -336,7 +338,7 @@ public class GMusicClientCalls {
 		jsonParam.put("mutations", mutationsArray);
 
 		mHttpClient.setUserAgent(mMobileClientUserAgent);
-		String result = mHttpClient.post(context, 
+		String result = mHttpClient.post(context,
 										 "https://www.googleapis.com/sj/v1.1/playlistbatch?alt=json&hl=en_US", 
 										 new ByteArrayEntity(jsonParam.toString().getBytes()), 
 										 "application/json");
@@ -408,7 +410,7 @@ public class GMusicClientCalls {
 		jsonParam.put("mutations", mPlaylistEntriesMutationsArray);
 		
 		mHttpClient.setUserAgent(mMobileClientUserAgent);
-		String result = mHttpClient.post(context, 
+		String result = mHttpClient.post(context,
 										 "https://www.googleapis.com/sj/v1.1/plentriesbatch?alt=json&hl=en_US", 
 										 new ByteArrayEntity(jsonParam.toString().getBytes()), 
 										 "application/json");
@@ -448,7 +450,7 @@ public class GMusicClientCalls {
 		jsonRequestParams.put("start-token", "0");
 		
 		mHttpClient.setUserAgent(mMobileClientUserAgent);
-		String result = mHttpClient.post(context, 
+		String result = mHttpClient.post(context,
 				 						 "https://www.googleapis.com/sj/v1.1/playlistfeed?alt=json&hl=en_US&tier=basic", 
 				 						 new ByteArrayEntity(jsonRequestParams.toString().getBytes()), 
 				 						 "application/json");
@@ -489,7 +491,7 @@ public class GMusicClientCalls {
 		jsonRequestParams.put("start-token", "0");
 		
 		mHttpClient.setUserAgent(mMobileClientUserAgent);
-		String result = mHttpClient.post(context, 
+		String result = mHttpClient.post(context,
 				 						 "https://www.googleapis.com/sj/v1.1/plentryfeed?alt=json&hl=en_US&tier=basic", 
 				 						 new ByteArrayEntity(jsonRequestParams.toString().getBytes()), 
 				 						 "application/json");
@@ -528,7 +530,7 @@ public class GMusicClientCalls {
 		form.close();
 		
 		mHttpClient.setUserAgent(mMobileClientUserAgent);
-		String result = mHttpClient.post(context, 
+		String result = mHttpClient.post(context,
 										 "https://play.google.com/music/services/loadplaylist?u=0&xt=" + getXtCookieValue(), 
 				 						 new ByteArrayEntity(form.toString().getBytes()), 
 				 						 form.getContentType());
@@ -577,7 +579,7 @@ public class GMusicClientCalls {
 		form.addField("json", jsonParamString);
 		form.close();
 		
-		String result = mHttpClient.post(context, 
+		String result = mHttpClient.post(context,
 										 "https://play.google.com/music/services/changeplaylistorder?u=0&xt=" + getXtCookieValue(), 
 										 new ByteArrayEntity(form.toString().getBytes()), 
 										 form.getContentType());
